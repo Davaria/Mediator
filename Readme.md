@@ -28,27 +28,21 @@ class ChatRoom {
     public:
     // Transmitir
     virtual void broadcast(string from, string msg)= 0;
-    // Mensaje
-    virtual void message(string from, string to, string msg)= 0;
 };
 
 class Person : public ChatRoom{
-    public:
-    string              name;
-    ChatRoom*           room{nullptr};
+        public:
+        string              name;
+        ChatRoom*           room{nullptr};
 
-    void broadcast(string , string ){};
-    void message(string , string , string ){};
-    Person(string _name) { this->name = _name;}
-    
-    void say(string msg) { room->broadcast(name, msg);}
-    void pm(string to, string msg) { room->message(name, to, msg); }
-
-    void receive(string from, string msg) {
-        string s{from + ": \"" + msg + "\""};
-        cout << "[Chat de " << name << "]" << s << "\n";
-    }
-};
+        void broadcast(string , string ){};
+        Person(string _name) { this->name = _name;}
+        void say(string msg) { room->broadcast(name, msg);}
+        void receive(string from, string msg) {
+            string s{from + ": \"" + msg + "\""};
+            cout << "[Chat de " << name << "]" << s << "\n";
+        }
+    };
 
 class GoogleMeet : public ChatRoom
 {
@@ -64,19 +58,8 @@ class GoogleMeet : public ChatRoom
     void join(Person *p) {
         string join_msg = p->name + " se unio al chat";
         broadcast("room", join_msg);
-        // p->room = apunta a la clase Google Meet
         p->room = this;
         people.push_back(p);
-    }
-    // Mensaje
-    void message(string from, string to, string msg) {
-        auto target = find_if(begin(people), end(people),
-        [&](const Person *p) {
-            return p->name == to;
-        });
-
-        if (target != end(people)) 
-            (*target)->receive(from, msg);
     }
 };
 
@@ -94,8 +77,6 @@ int main() {
     Person simon("Simon");
     room.join(&simon);
     simon.say("Hola a todos!");
-
-    jane.pm("Simon", "Me alegro de que nos hayas encontrado, Simon!");
 
     return 0;
 }
